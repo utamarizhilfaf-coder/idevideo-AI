@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#11152a">
+<meta name="description" content="IdeVideo AI membantu kreator menyusun prompt video dan storyboard siap disalin ke aplikasi video AI.">
+<title>IdeVideo AI — Prompt Video Generator</title>
+<style>
+:root{
+  --bg:#0d1020;--panel:#151a30;--panel2:#1b2240;--line:#2b3456;
+  --text:#f5f6ff;--muted:#aab3d1;--accent:#a895ff;--accent2:#7de5d1;
+  --danger:#ffb3b3;--radius:20px;--shadow:0 18px 50px rgba(0,0,0,.22)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(ellipse at 12% 0%,#24224b 0,transparent 34%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
+.wrap{width:min(1160px,100% - 32px);margin:auto}
+nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:850;letter-spacing:-.04em;font-size:1.18rem}
+.logo{display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#11152a;font-weight:900}
+.nav-note{color:var(--muted);font-size:.88rem}
+.hero{padding:36px 0 30px;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:36px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid #49416f;background:#221e42;color:#d7d0ff;padding:7px 11px;border-radius:99px;font-size:.78rem;font-weight:750}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--accent2)}
+h1{font-size:clamp(2.5rem,6vw,4.7rem);letter-spacing:-.065em;line-height:1.02;margin:18px 0}
+.gradient{background:linear-gradient(90deg,#c8bbff,#8fe9d8);color:transparent;background-clip:text}
+.hero p{font-size:1.05rem;max-width:600px;color:var(--muted);margin:0 0 24px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px}
+.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:800;transition:transform .15s,opacity .15s}
+.btn:hover{transform:translateY(-1px)}
+.primary{background:linear-gradient(120deg,var(--accent),#8de9d8);color:#11152a}
+.secondary{background:#272e4c;color:var(--text);border:1px solid #3a456a}
+.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.preview{position:relative;background:linear-gradient(150deg,#252449,#141b31 70%);border:1px solid #3a3b66;border-radius:28px;padding:20px;box-shadow:var(--shadow);overflow:hidden}
+.preview:before{content:"";position:absolute;width:220px;height:220px;right:-90px;top:-110px;background:#8c7aff33;filter:blur(8px);border-radius:50%}
+.window-dots{display:flex;gap:6px;margin-bottom:18px}
+.window-dots span{width:8px;height:8px;border-radius:50%;background:#686e90}
+.preview-label{color:#aeb8d8;font-size:.75rem;text-transform:uppercase;letter-spacing:.12em;font-weight:800}
+.preview h3{margin:7px 0 14px;font-size:1.2rem}
+.mini-scene{display:flex;gap:12px;padding:13px;margin-top:10px;border:1px solid #343c5f;border-radius:14px;background:#11172b}
+.scene-number{width:34px;height:34px;display:grid;place-items:center;flex-shrink:0;border-radius:10px;background:#302a54;color:#d9d0ff;font-weight:900}
+.mini-scene strong{display:block;font-size:.9rem}.mini-scene small{color:var(--muted)}
+.section-title{margin:32px 0 16px}
+.section-title h2{margin:0;font-size:1.6rem;letter-spacing:-.04em}
+.section-title p{margin:5px 0 0;color:var(--muted)}
+.app-grid{display:grid;grid-template-columns:minmax(0,.94fr) minmax(0,1.06fr);gap:18px;align-items:start;margin-bottom:36px}
+.card{background:rgba(21,26,48,.92);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);min-width:0}
+.card h2{font-size:1.12rem;margin:0 0 5px}
+.sub{color:var(--muted);font-size:.88rem;margin:0 0 18px}
+label{display:block;font-weight:750;font-size:.9rem;margin:15px 0 7px}
+textarea,select,input[type=text]{width:100%;color:var(--text);background:#0f1428;border:1px solid #354061;border-radius:11px;padding:12px 13px;min-width:0}
+textarea{min-height:112px;resize:vertical}
+select{appearance:auto}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field-grid label{margin-top:14px}
+.check-row{display:flex;gap:9px;align-items:flex-start;color:var(--muted);font-size:.86rem;margin-top:15px}
+.check-row input{margin-top:5px;accent-color:var(--accent)}
+.full{width:100%;margin-top:18px}
+.template-row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+.chip{border:1px solid #394365;background:#202743;color:#d8ddf4;border-radius:999px;padding:7px 10px;font-size:.8rem;font-weight:700}
+.chip:hover,.chip.active{border-color:var(--accent);background:#302b52;color:#fff}
+.output-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.output-top h2{margin:0}
+.status{font-size:.75rem;color:var(--accent2);font-weight:800}
+.output{background:#0d1326;border:1px solid #303b5e;border-radius:14px;padding:16px;min-height:310px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.91rem;line-height:1.7;color:#e5e9ff}
+.output.empty{color:#8994b8;display:flex;align-items:center;justify-content:center;text-align:center}
+.output-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.output-actions button{margin-top:12px}
+.history{margin-top:18px;border-top:1px solid var(--line);padding-top:16px}
+.history-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.history-head h3{font-size:.94rem;margin:0}
+.history-list{display:grid;gap:8px;margin-top:10px}
+.history-item{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid #303957;background:#11172b;border-radius:10px;padding:10px 12px}
+.history-item button{background:none;border:0;color:#d9d2ff;text-align:left;font-size:.85rem;min-width:0;overflow-wrap:anywhere}
+.history-item .remove{color:#aab3d1;font-size:.75rem;flex-shrink:0}
+.empty-history{color:var(--muted);font-size:.83rem}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:36px}
+.feature{background:#151a30;border:1px solid var(--line);border-radius:16px;padding:18px}
+.feature-icon{width:40px;height:40px;border-radius:12px;background:#2b2850;display:grid;place-items:center;font-size:1.2rem}
+.feature h3{font-size:1rem;margin:12px 0 6px}.feature p{font-size:.87rem;color:var(--muted);margin:0}
+footer{border-top:1px solid #272f4d;padding:22px 0 32px;color:var(--muted);font-size:.82rem;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#e4fff8;color:#102520;padding:11px 16px;border-radius:12px;font-weight:800;box-shadow:var(--shadow);transition:.2s;z-index:10}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:820px){.hero{grid-template-columns:1fr;gap:24px;padding-top:20px}.preview{max-width:620px}.app-grid{grid-template-columns:1fr}.features{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.wrap{width:min(100% - 22px,1160px)}nav{padding:16px 0}.nav-note{display:none}.hero{padding:18px 0 22px}h1{font-size:2.8rem}.card{padding:16px;border-radius:16px}.field-grid{grid-template-columns:1fr;gap:0}.features{grid-template-columns:1fr}.output{min-height:260px}.output-actions{grid-template-columns:1fr}.section-title h2{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav aria-label="Navigasi utama">
+    <div class="brand"><span class="logo">IV</span><span>IdeVideo <span class="gradient">AI</span></span></div>
+    <div class="nav-note">Prompt video • Storyboard • Kreator Indonesia</div>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <span class="eyebrow"><span class="dot"></span> TOOL GRATIS UNTUK KREATOR</span>
+      <h1>Dari ide jadi<br><span class="gradient">prompt video.</span></h1>
+      <p>Susun prompt video yang rapi dalam hitungan detik. Pilih gaya visual, durasi, suasana, dan audio—lalu salin hasilnya ke Dola AI atau alat video pilihan Anda.</p>
+      <div class="hero-actions">
+        <button class="btn primary" id="startBtn">Coba generator ↓</button>
+        <button class="btn secondary" id="exampleBtn">Muat contoh prompt</button>
+      </div>
+    </div>
+    <div class="preview" aria-label="Pratinjau storyboard">
+      <div class="window-dots"><span></span><span></span><span></span></div>
+      <div class="preview-label">Pratinjau storyboard</div>
+      <h3>ASMR • Suasana hujan</h3>
+      <div class="mini-scene"><div class="scene-number">01</div><div><strong>Persiapan bahan</strong><small>Tangan menata bahan di meja dapur.</small></div></div>
+      <div class="mini-scene"><div class="scene-number">02</div><div><strong>Proses memasak</strong><small>Uap hangat, suara hujan dan alat masak.</small></div></div>
+      <div class="mini-scene"><div class="scene-number">03</div><div><strong>Hidangan selesai</strong><small>Close-up hasil akhir dengan cahaya lembut.</small></div></div>
+    </div>
+  </section>
+
+  <div class="section-title" id="generator">
+    <h2>Buat prompt Anda</h2>
+    <p>Isi beberapa detail. Generator ini bekerja langsung di browser, tanpa API key.</p>
+  </div>
+
+  <section class="app-grid">
+    <div class="card">
+      <h2>01 / Ide & pengaturan</h2>
+      <p class="sub">Mulai dari satu kalimat, lalu sesuaikan gaya videonya.</p>
+
+      <label for="idea">Ide video <span style="color:var(--danger)">*</span></label>
+      <textarea id="idea" maxlength="1200" placeholder="Contoh: wanita muslimah chibi faceless membuat mi instan saat hujan rintik di luar jendela."></textarea>
+      <div class="template-row" aria-label="Template ide cepat">
+        <button class="chip" data-template="asmr">ASMR memasak</button>
+        <button class="chip" data-template="product">Promosi produk</button>
+        <button class="chip" data-template="story">Cerita pendek</button>
+        <button class="chip" data-template="vlog">Vlog perjalanan</button>
+      </div>
+
+      <div class="field-grid">
+        <div>
+          <label for="style">Gaya visual</label>
+          <select id="style">
+            <option>3D Kawaii</option><option>Sinematik realistis</option>
+            <option>Anime</option><option>ASMR cinematic</option>
+            <option>Dokumenter natural</option><option>Stop motion</option>
+          </select>
+        </div>
+        <div>
+          <label for="duration">Durasi total</label>
+          <select id="duration">
+            <option value="8">8 detik</option><option value="10" selected>10 detik</option>
+            <option value="15">15 detik</option><option value="30">30 detik</option>
+            <option value="60">60 detik</option>
+          </select>
+        </div>
+        <div>
+          <label for="ratio">Rasio layar</label>
+          <select id="ratio"><option value="9:16">9:16 • Vertikal</option><option value="16:9">16:9 • Horizontal</option><option value="1:1">1:1 • Persegi</option></select>
+        </div>
+        <div>
+          <label for="camera">Gerakan kamera</label>
+          <select id="camera"><option>Gerakan halus dan natural</option><option>Close-up detail</option><option>Slow dolly-in</option><option>Tracking shot</option><option>Kamera statis</option><option>Wide shot lalu close-up</option></select>
+        </div>
+        <div>
+          <label for="audio">Audio</label>
+          <select id="audio"><option>ASMR alami tanpa musik</option><option>Suara lingkungan alami</option><option>Musik latar lembut</option><option>Dialog bahasa Indonesia</option><option>Tanpa audio</option></select>
+        </div>
+        <div>
+          <label for="sceneMode">Pembagian adegan</label>
+          <select id="sceneMode"><option value="auto">Otomatis berdasarkan durasi</option><option value="1">1 adegan</option><option value="2">2 adegan</option><option value="3">3 adegan</option><option value="4">4 adegan</option><option value="6">6 adegan</option></select>
+        </div>
+      </div>
+      <label for="character">Konsistensi karakter (opsional)</label>
+      <input id="character" type="text" maxlength="350" placeholder="Contoh: karakter chibi berhijab krem, apron cokelat">
+      <label for="setting">Lokasi / suasana (opsional)</label>
+      <input id="setting" type="text" maxlength="350" placeholder="Contoh: dapur kayu hangat, hujan di jendela">
+      <label class="check-row"><input type="checkbox" id="negative" checked><span>Sertakan arahan untuk menghindari kesalahan visual dan perubahan karakter.</span></label>
+      <button class="btn primary full" id="generateBtn">✨ Buat prompt video</button>
+    </div>
+
+    <div class="card">
+      <div class="output-top"><h2>02 / Hasil prompt</h2><span class="status" id="status">SIAP</span></div>
+      <p class="sub">Tinjau hasilnya, salin, atau simpan di riwayat browser ini.</p>
+      <div id="result" class="output empty" aria-live="polite">Prompt Anda akan muncul di sini.<br>Mulai dengan menulis ide di panel sebelah.</div>
+      <div class="output-actions">
+        <button class="btn primary" id="copyBtn">Salin prompt</button>
+        <button class="btn secondary" id="saveBtn">Simpan ke riwayat</button>
+        <button class="btn ghost" id="downloadBtn">Unduh .txt</button>
+        <button class="btn ghost" id="clearBtn">Bersihkan hasil</button>
+      </div>
+      <div class="history">
+        <div class="history-head"><h3>Riwayat prompt di perangkat ini</h3><button class="btn ghost" id="clearHistoryBtn" style="padding:7px 10px;font-size:.75rem">Hapus riwayat</button></div>
+        <div id="historyList" class="history-list"><div class="empty-history">Belum ada prompt tersimpan.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-title">
+    <h2>Dibuat untuk alur kerja kreator</h2>
+    <p>Fitur awal sederhana, bisa dikembangkan sesuai kebutuhan pengguna.</p>
+  </div>
+  <section class="features">
+    <article class="feature"><div class="feature-icon">🎬</div><h3>Storyboard otomatis</h3><p>Bagi durasi video menjadi adegan dengan rentang waktu yang terukur.</p></article>
+    <article class="feature"><div class="feature-icon">🧩</div><h3>Karakter konsisten</h3><p>Tambahkan deskripsi karakter dan suasana agar instruksi berulang di tiap scene.</p></article>
+    <article class="feature"><div class="feature-icon">📋</div><h3>Salin dan simpan</h3><p>Salin prompt atau unduh sebagai teks. Riwayat tersimpan lokal di browser.</p></article>
+  </section>
+
+  <footer><span>© <span id="year"></span> IdeVideo AI • Prototipe</span><span>Bukan produk resmi atau afiliasi Dola AI. Hasil prompt perlu ditinjau sebelum digunakan.</span></footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  let currentPrompt = "";
+  const templates = {
+    asmr: "Wanita muslimah chibi faceless sedang membuat mi instan di dapur yang nyaman, terlihat rintik hujan di luar jendela, fokus pada tangan, bahan, uap, dan suara memasak yang menenangkan.",
+    product: "Video promosi sinematik untuk sebuah produk lokal, menampilkan detail produk, tekstur, cara penggunaan, dan hasil akhir dalam suasana premium.",
+    story: "Cerita pendek hangat tentang seseorang yang menemukan kejutan kecil di tengah hari yang sibuk, dengan ekspresi dan gerakan yang mudah dipahami.",
+    vlog: "Vlog perjalanan singkat menampilkan suasana tempat wisata, detail lingkungan, aktivitas pengunjung, dan pemandangan utama dengan gerakan kamera yang halus."
+  };
+  const quickTemplates = {
+    asmr: "ASMR memasak", product: "Promosi produk", story: "Cerita pendek", vlog: "Vlog perjalanan"
+  };
+
+  function toast(message) {
+    const el = $("toast");
+    el.textContent = message;
+    el.classList.add("show");
+    window.setTimeout(() => el.classList.remove("show"), 2200);
+  }
+
+  function splitScenes(total, count) {
+    const base = Math.floor(total / count), remainder = total % count;
+    const parts = []; let start = 0;
+    for (let i = 0; i < count; i++) {
+      const length = base + (i < remainder ? 1 : 0);
+      parts.push({start, end: start + length, index: i + 1});
+      start += length;
+    }
+    return parts;
+  }
+
+  function sceneDescription(index, count, idea) {
+    const descriptions = [
+      "Pembukaan: perkenalkan lokasi, karakter atau objek utama. Bangun suasana dengan komposisi yang jelas.",
+      "Persiapan: tampilkan detail penting dan gerakan awal yang mudah diikuti.",
+      "Aksi utama: fokus pada aktivitas inti, perubahan kecil, tekstur, dan interaksi objek.",
+      "Detail sinematik: gunakan sudut yang menarik untuk memperlihatkan bagian penting dari aksi.",
+      "Penyelesaian: tunjukkan hasil atau perubahan yang terjadi secara alami.",
+      "Penutup: akhiri dengan gambar yang memuaskan, komposisi bersih, dan transisi lembut."
+    ];
+    if (count === 1) return `Tampilkan keseluruhan aksi secara ringkas dan utuh: ${idea}.`;
+    return descriptions[Math.min(index - 1, descriptions.length - 1)];
+  }
+
+  function generate() {
+    const idea = $("idea").value.trim();
+    if (!idea) {
+      $("idea").focus(); toast("Tulis ide video terlebih dahulu."); return;
+    }
+    const style = $("style").value;
+    const duration = Number($("duration").value);
+    const ratio = $("ratio").value;
+    const camera = $("camera").value;
+    const audio = $("audio").value;
+    const character = $("character").value.trim();
+    const setting = $("setting").value.trim();
+    const requested = $("sceneMode").value;
+    const count = requested === "auto" ? (duration <= 10 ? 1 : duration <= 15 ? 2 : duration <= 30 ? 3 : 4) : Math.min(Number(requested), duration);
+    const scenes = splitScenes(duration, count);
+    const lines = [
+      "IDEVIDEO AI — PROMPT VIDEO",
+      "",
+      "KONSEP UTAMA",
+      idea,
+      "",
+      "PENGATURAN",
+      `Gaya visual: ${style}`,
+      `Durasi total: ${duration} detik`,
+      `Rasio layar: ${ratio}`,
+      `Kamera: ${camera}`,
+      `Audio: ${audio}`,
+      ...(character ? [`Karakter tetap: ${character}`] : []),
+      ...(setting ? [`Lokasi/suasana: ${setting}`] : []),
+      "",
+      "ARAHAN UMUM",
+      `Buat video dengan gaya ${style}, rasio ${ratio}, durasi keseluruhan ${duration} detik. ${camera}.`,
+      character ? `Pertahankan desain karakter yang sama di seluruh adegan: ${character}.` : "Jika karakter muncul, pertahankan identitas visualnya di semua adegan.",
+      setting ? `Pertahankan lokasi dan atmosfer: ${setting}.` : "Jaga kontinuitas lokasi, pencahayaan, dan properti.",
+      `Audio: ${audio}. Pastikan suara selaras dengan aksi visual.`,
+      "Gunakan gerakan yang wajar, detail yang jelas, pencahayaan konsisten, dan transisi antaradegan yang halus.",
+      "",
+      "STORYBOARD PER ADEGAN"
+    ];
+    scenes.forEach(s => {
+      lines.push("", `SCENE ${String(s.index).padStart(2,"0")} — ${s.start}–${s.end} detik`,
+        sceneDescription(s.index, count, idea),
+        `Aksi utama: ${idea}`,
+        `Kamera: ${camera}.`,
+        `Suasana/lokasi: ${setting || "sesuai konsep utama, dengan detail lingkungan yang konsisten"}.`,
+        `Audio: ${audio}.`,
+        "Transisi: sambungkan gerakan atau komposisi dengan adegan berikutnya secara natural.");
+    });
+    if ($("negative").checked) {
+      lines.push("", "HINDARI / NEGATIVE GUIDANCE",
+        "Hindari perubahan wajah atau pakaian yang tidak disengaja, bentuk tangan atau objek yang tidak wajar, properti yang tiba-tiba muncul atau hilang, gerakan patah-patah, flicker, pencahayaan yang berubah drastis, teks acak, watermark yang tidak diminta, dan transisi mendadak.");
+    }
+    lines.push("", "CATATAN",
+      "Prompt ini adalah panduan teks. Sesuaikan dengan kemampuan, batas durasi, dan format input alat video yang digunakan.");
+    currentPrompt = lines.join("\n");
+    $("result").classList.remove("empty");
+    $("result").textContent = currentPrompt;
+    $("status").textContent = "PROMPT SIAP";
+    toast("Prompt berhasil dibuat.");
+  }
+
+  async function copyPrompt() {
+    if (!currentPrompt) { toast("Buat prompt terlebih dahulu."); return; }
+    try {
+      await navigator.clipboard.writeText(currentPrompt);
+      toast("Prompt berhasil disalin.");
+    } catch (e) {
+      const area = document.createElement("textarea");
+      area.value = currentPrompt; area.style.position = "fixed"; area.style.opacity = "0";
+      document.body.appendChild(area); area.select();
+      const ok = document.execCommand("copy"); area.remove();
+      toast(ok ? "Prompt berhasil disalin." : "Salin prompt secara manual.");
+    }
+  }
+
+  function readHistory() {
+    try { return JSON.parse(localStorage.getItem("idevideo-history") || "[]"); }
+    catch (e) { return []; }
+  }
+  function renderHistory() {
+    const list = $("historyList"), history = readHistory();
+    list.replaceChildren();
+    if (!history.length) {
+      const msg = document.createElement("div");
+      msg.className = "empty-history"; msg.textContent = "Belum ada prompt tersimpan.";
+      list.appendChild(msg); return;
+    }
+    history.slice().reverse().forEach((item, reverseIndex) => {
+      const row = document.createElement("div"); row.className = "history-item";
+      const load = document.createElement("button");
+      load.textContent = item.title || "Prompt tanpa judul";
+      load.title = "Muat prompt ini";
+      load.addEventListener("click", () => {
+        currentPrompt = item.prompt;
+        $("result").classList.remove("empty"); $("result").textContent = currentPrompt;
+        $("status").textContent = "DARI RIWAYAT"; toast("Prompt dimuat.");
+      });
+      const remove = document.createElement("button"); remove.className = "remove"; remove.textContent = "Hapus";
+      remove.addEventListener("click", () => {
+        const actualIndex = history.length - 1 - reverseIndex;
+        history.splice(actualIndex, 1);
+        localStorage.setItem("idevideo-history", JSON.stringify(history)); renderHistory();
+        toast("Item riwayat dihapus.");
+      });
+      row.append(load, remove); list.appendChild(row);
+    });
+  }
+  function savePrompt() {
+    if (!currentPrompt) { toast("Buat prompt terlebih dahulu."); return; }
+    const history = readHistory();
+    const title = $("idea").value.trim().slice(0, 62) || "Prompt video";
+    history.push({title, prompt: currentPrompt, savedAt: new Date().toISOString()});
+    try {
+      localStorage.setItem("idevideo-history", JSON.stringify(history.slice(-20)));
+      renderHistory(); toast("Prompt disimpan di browser ini.");
+    } catch (e) { toast("Penyimpanan browser penuh atau tidak tersedia."); }
+  }
+  function downloadPrompt() {
+    if (!currentPrompt) { toast("Buat prompt terlebih dahulu."); return; }
+    const blob = new Blob([currentPrompt], {type:"text/plain;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = "idevideo-prompt.txt";
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    toast("File prompt diunduh.");
+  }
+  function clearOutput() {
+    currentPrompt = ""; $("result").classList.add("empty");
+    $("result").textContent = "Prompt Anda akan muncul di sini.\nMulai dengan menulis ide di panel sebelah.";
+    $("status").textContent = "SIAP"; toast("Hasil dibersihkan.");
+  }
+  function loadExample() {
+    $("idea").value = templates.asmr;
+    $("style").value = "3D Kawaii"; $("duration").value = "30";
+    $("ratio").value = "9:16"; $("camera").value = "Close-up detail";
+    $("audio").value = "ASMR alami tanpa musik";
+    $("character").value = "Wanita muslimah chibi faceless, hijab warna krem, apron cokelat, proporsi karakter konsisten";
+    $("setting").value = "Dapur kayu hangat, jendela dengan rintik hujan di luar";
+    $("sceneMode").value = "3";
+    generate(); $("generator").scrollIntoView({behavior:"smooth", block:"start"});
+  }
+
+  $("generateBtn").addEventListener("click", generate);
+  $("copyBtn").addEventListener("click", copyPrompt);
+  $("saveBtn").addEventListener("click", savePrompt);
+  $("downloadBtn").addEventListener("click", downloadPrompt);
+  $("clearBtn").addEventListener("click", clearOutput);
+  $("clearHistoryBtn").addEventListener("click", () => {
+    if (confirm("Hapus semua riwayat prompt yang tersimpan di browser ini?")) {
+      localStorage.removeItem("idevideo-history"); renderHistory(); toast("Riwayat dihapus.");
+    }
+  });
+  $("startBtn").addEventListener("click", () => $("generator").scrollIntoView({behavior:"smooth"}));
+  $("exampleBtn").addEventListener("click", loadExample);
+  document.querySelectorAll("[data-template]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-template]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      $("idea").value = templates[btn.dataset.template];
+    });
+  });
+  $("year").textContent = new Date().getFullYear();
+  renderHistory();
+})();
+</script>
+</body>
+</html>
